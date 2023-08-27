@@ -4,6 +4,9 @@ import { code } from "telegraf/format"
 import config from "config"
 import { ogg } from "./ogg.js"
 import { openai } from "./openai.js"
+import { removeFile } from "./utils.js"
+
+console.log(config.get('ENV'))
 
 const INITIAL_SESSION = {
     messages: []
@@ -63,6 +66,9 @@ bot.on(message('voice'), async ctx => {
 
         const text = await openai.transcription(mp3Path)
         await ctx.reply(code(`Your message: ${text}`))
+
+        await removeFile(oggPath)
+        await removeFile(mp3Path)
 
         const response = await askChat(ctx, text);
 

@@ -1,4 +1,4 @@
 {
-  "TELEGRAM_TOKEN": "Rename the file to default.json and put your TELEGRAM BOT TOKEN here",
-  "OPENAI_API_KEY": "Rename the file to default.json and put your OPENAI API KEY here"
+  "TELEGRAM_TOKEN": "Rename the file to default.json (development) and put your DEV TELEGRAM BOT TOKEN here",
+  "OPENAI_API_KEY": "Rename the file to default.json (development) and put your DEV OPENAI API KEY here"
 }
