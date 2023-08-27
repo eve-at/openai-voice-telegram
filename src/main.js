@@ -1,11 +1,27 @@
-import { Telegraf } from "telegraf"
+import { Telegraf, session } from "telegraf"
 import { message } from "telegraf/filters"
 import { code } from "telegraf/format"
 import config from "config"
 import { ogg } from "./ogg.js"
 import { openai } from "./openai.js"
 
+const INITIAL_SESSION = {
+    messages: []
+}
+
 const bot = new Telegraf(config.get('TELEGRAM_TOKEN'))
+
+bot.use(session())
+
+bot.command('new', async (ctx) => {
+    ctx.session = INITIAL_SESSION
+    await ctx.reply(code('Waiting for your text or voice message'))
+})
+
+bot.command('start', async (ctx) => {
+    ctx.session = INITIAL_SESSION
+    await ctx.reply(code('Waiting for your text or voice message'))
+})
 
 // text message
 bot.on(message('text'), async ctx => {
@@ -18,6 +34,8 @@ bot.on(message('text'), async ctx => {
 
 // voice message
 bot.on(message('voice'), async ctx => {
+    ctx.session ??= INITIAL_SESSION
+
     try {
         await ctx.reply(code('Message received. Waiting the answer from the server...'))
 
@@ -32,17 +50,14 @@ bot.on(message('voice'), async ctx => {
         const text = await openai.transcription(mp3Path)
         await ctx.reply(code(`Your message: ${text}`))
 
-        const messages = [{role: openai.roles.USER, content: text }]
-        const response = await openai.chat(messages)
+        ctx.session.messages.push({role: openai.roles.USER, content: text })
+        const response = await openai.chat(ctx.session.messages)
+        ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response })
 
         await ctx.reply(response)
     } catch (e) {
         console.log('Voice message error ', e.message);
     }
-})
-
-bot.command('start', async (ctx) => {
-    await ctx.reply(JSON.stringify(ctx.message, null, 2))
 })
 
 bot.launch()
