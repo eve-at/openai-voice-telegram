@@ -20,10 +20,12 @@ bot.on(message('voice'), async ctx => {
         //await ctx.reply(JSON.stringify(ctx.message, null, 2))
         const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id)
         const userId = String(ctx.message.from.id)
-        await ctx.reply(JSON.stringify(link, null, 2))
         console.log('Voice url: ', link.href);
 
-        const offPath = await ogg.create(link.href, userId)
+        const oggPath = await ogg.create(link.href, userId)
+        const mp3Path = await ogg.toMp3(oggPath, userId)
+
+        await ctx.reply(mp3Path)
     } catch (e) {
         console.log('Voice message error ', e.message);
     }
