@@ -20,13 +20,27 @@ bot.command('new', async (ctx) => {
 
 bot.command('start', async (ctx) => {
     ctx.session = INITIAL_SESSION
-    await ctx.reply(code('Waiting for your text or voice message'))
+    await ctx.reply(code('Waiting for your text or voice message. Tap /new to start new session'))
 })
+
+async function askChat(ctx, text) {
+    ctx.session.messages.push({role: openai.roles.USER, content: text })
+    const response = await openai.chat(ctx.session.messages)
+    ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response })
+
+    return response
+}
 
 // text message
 bot.on(message('text'), async ctx => {
+    ctx.session ??= INITIAL_SESSION
+
     try {
-        await ctx.reply(JSON.stringify(ctx.message.text, null, 2))
+        await ctx.reply(code('Message received. Waiting the answer from the server...'))
+
+        const response = await askChat(ctx, ctx.message.text);
+
+        await ctx.reply(response)
     } catch (e) {
         console.log('Voice message error ', e.message);
     }
@@ -50,9 +64,7 @@ bot.on(message('voice'), async ctx => {
         const text = await openai.transcription(mp3Path)
         await ctx.reply(code(`Your message: ${text}`))
 
-        ctx.session.messages.push({role: openai.roles.USER, content: text })
-        const response = await openai.chat(ctx.session.messages)
-        ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response })
+        const response = await askChat(ctx, text);
 
         await ctx.reply(response)
     } catch (e) {
