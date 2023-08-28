@@ -1,0 +1,8 @@
+.idea/
+node_modules/
+config/developement.json
+config/production.json
+voices/*.ogg
+voices/*.mp3
+
+

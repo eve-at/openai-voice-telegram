@@ -1,0 +1,4 @@
+{
+  "TELEGRAM_TOKEN": "Rename the file to production.json and put your PROD TELEGRAM BOT TOKEN here",
+  "OPENAI_API_KEY": "Rename the file to production.json and put your PROD OPENAI API KEY here"
+}
