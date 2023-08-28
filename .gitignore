@@ -1,6 +1,6 @@
 .idea/
 node_modules/
-config/default.json
+config/developement.json
 config/production.json
 voices/*.ogg
 voices/*.mp3
