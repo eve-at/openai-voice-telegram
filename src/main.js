@@ -6,8 +6,6 @@ import { ogg } from "./ogg.js"
 import { openai } from "./openai.js"
 import { removeFile } from "./utils.js"
 
-console.log(config.get('ENV'))
-
 const INITIAL_SESSION = {
     messages: []
 }
