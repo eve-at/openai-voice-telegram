@@ -1,6 +1,7 @@
 import OpenAI from "openai"
 import config from "config"
 import { createReadStream } from "fs"
+import { logError } from "./utils.js"
 
 class opAI {
     roles = {
@@ -25,7 +26,7 @@ class opAI {
 
             return response.choices.pop().message.content
         } catch (e) {
-            console.log('Error while OpenAI processing', e.message)
+            logError('Error while OpenAI processing: ' + e.message)
         }
     }
 
@@ -38,7 +39,7 @@ class opAI {
             })
             return response.text
         } catch (e) {
-            console.log('Error while OpenAI transcription', e.message)
+            logError('Error while OpenAI transcription', e.message)
         }
     }
 }

@@ -4,7 +4,7 @@ import { code } from "telegraf/format"
 import config from "config"
 import { ogg } from "./ogg.js"
 import { openai } from "./openai.js"
-import { removeFile } from "./utils.js"
+import { removeFile, log, logError } from "./utils.js"
 
 const INITIAL_SESSION = {
     messages: []
@@ -43,7 +43,7 @@ bot.on(message('text'), async ctx => {
 
         await ctx.reply(response)
     } catch (e) {
-        console.log('Voice message error ', e.message);
+        logError('Text message error: ' + e.message);
     }
 })
 
@@ -57,7 +57,7 @@ bot.on(message('voice'), async ctx => {
         //await ctx.reply(JSON.stringify(ctx.message, null, 2))
         const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id)
         const userId = String(ctx.message.from.id)
-        console.log('Voice url: ', link.href);
+        log('Voice url: ' + link.href);
 
         const oggPath = await ogg.create(link.href, userId)
         const mp3Path = await ogg.toMp3(oggPath, userId)
@@ -72,7 +72,7 @@ bot.on(message('voice'), async ctx => {
 
         await ctx.reply(response)
     } catch (e) {
-        console.log('Voice message error ', e.message);
+        logError('Voice message error: ' + e.message);
     }
 })
 
